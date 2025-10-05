@@ -1,6 +1,6 @@
 #include "lib/config/config.h"
 
-namespace lib::config {
+namespace config {
 
 bool Config::getBoolean(const std::string& name) const {
     return getValue<bool>(name);

@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION "3.28.3")
 
-project(client)
+project(chat_server)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-add_executable(${PROJECT_NAME} client.cpp)
+
 add_subdirectory(lib)
 
-# -------------------------
-project(server)
+add_executable(client client.cpp)
+target_link_libraries(client PRIVATE lib)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-add_executable(${PROJECT_NAME} server.cpp)
+add_executable(server server.cpp)
+target_link_libraries(server PRIVATE lib)

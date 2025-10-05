@@ -2,11 +2,13 @@
 #define LIB_CONFIG_CONFIG_H
 
 #include <string>
+#include <iostream>
 #include <unordered_map>
 #include <mutex>
 #include <variant>
+#include <exception>
 
-namespace lib::config {
+namespace config {
 
 class Config;
 
@@ -56,7 +58,7 @@ private:
     template <typename T>
     T getValueWithDefault(const std::string& name, const T defaultValue) const {
         try {
-            return getValue(name);
+            return getValue<T>(name);
         } catch (const internal::EntryNotFoundException& e) {
             return std::move(defaultValue);
         }
