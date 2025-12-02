@@ -2,6 +2,7 @@
 #define LIB_CONFIG_CONFIGFACTORY_H
 
 #include <string>
+#include <memory>
 #include "lib/config/config.h"
 
 namespace config {
