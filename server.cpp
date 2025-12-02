@@ -8,6 +8,7 @@
 #include <cstring>
 #include <thread>
 #include <vector>
+#include <memory>
 
 #include <cstdio>
 #include <sys/types.h>
@@ -84,7 +85,7 @@ void processMessage(const utils::Connection& conn, std::vector<utils::Connection
     }
 }
 
-void processingLoop(int serverSocket, std::unique_ptr<std::atomic<bool>>& running) {
+void processingLoop(int serverSocket, std::shared_ptr<std::atomic<bool>> running) {
     fd_set connectionSet;
     std::vector<utils::Connection> connections;
 
@@ -136,7 +137,7 @@ void waitForShutdown(int serverSocket) {
 }
 
 void startProcessingLoop(int serverSocket) {
-    auto running = std::make_unique<std::atomic<bool>>(true);
+    auto running = std::make_shared<std::atomic<bool>>(true);
 
     std::thread([&running, serverSocket]() {
         waitForShutdown(serverSocket);
