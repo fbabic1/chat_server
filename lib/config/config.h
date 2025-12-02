@@ -11,6 +11,7 @@
 namespace config {
 
 class Config;
+class ConfigFactory;
 
 namespace internal {
 
@@ -22,7 +23,8 @@ using ConfigEntry = std::variant<
 >;
 
 class EntryNotFoundException : public std::runtime_error {
-    EntryNotFoundException(const std::string& str) : std::runtime_error(str) {}
+public:
+    explicit EntryNotFoundException(const std::string& str) : std::runtime_error(str) {}
 };
 
 } // namespace internal
@@ -39,6 +41,9 @@ public:
 
     Config* getConfig(const std::string& name) const noexcept;
 
+    /* Factory needs to construct configs and populate them. */
+    friend class ConfigFactory;
+
 private:
     template <typename T>
     T getValue(const std::string& name) const {
@@ -49,18 +54,18 @@ private:
         }
 
         const internal::ConfigEntry& value = iterator->second;
-        if (std::holds_alternative<T>(value)) {
+        if (!std::holds_alternative<T>(value)) {
             throw std::logic_error("config::getValue: config context of invalid type");
         }
         return std::get<T>(value);
     }
 
     template <typename T>
-    T getValueWithDefault(const std::string& name, const T defaultValue) const {
+    T getValueWithDefault(const std::string& name, const T& defaultValue) const {
         try {
             return getValue<T>(name);
-        } catch (const internal::EntryNotFoundException& e) {
-            return std::move(defaultValue);
+        } catch (const internal::EntryNotFoundException&) {
+            return defaultValue;
         }
     }
 
@@ -69,9 +74,9 @@ private:
         std::lock_guard<std::recursive_mutex> guard(m_mutex);
         
         auto result = m_map.insert_or_assign(name, internal::ConfigEntry(std::move(value)));
-        const bool isInserted = result.second;
-        if (isInserted) {
-            std::clog << "Config Parsing: value " << name << "overriden";
+        const bool inserted = result.second;
+        if (!inserted) {
+            std::clog << "Config Parsing: value " << name << " overridden\n";
         }
     }
 

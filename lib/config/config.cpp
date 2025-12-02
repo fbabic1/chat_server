@@ -14,19 +14,19 @@ std::string Config::getString(const std::string& name) const {
     return getValue<std::string>(name);
 }
 
-bool Config::getBooleanWithDefault(const std::string& name, bool defaultValue) const {
+bool Config::getBooleanWithDefault(const std::string& name, bool defaultValue) const noexcept {
     return getValueWithDefault<bool>(name, defaultValue);
 }
 
-long long Config::getIntegerWithDefault(const std::string& name, long long defaultValue) const {
+long long Config::getIntegerWithDefault(const std::string& name, long long defaultValue) const noexcept {
     return getValueWithDefault<long long>(name, defaultValue);
 }
 
-std::string Config::getStringWithDefault(const std::string& name, const std::string& defaultValue) const {
-    return getValueWithDefault<std::string>(name, std::move(defaultValue));
+std::string Config::getStringWithDefault(const std::string& name, const std::string& defaultValue) const noexcept {
+    return getValueWithDefault<std::string>(name, defaultValue);
 }
 
-Config* Config::getConfig(const std::string& name) const {
+Config* Config::getConfig(const std::string& name) const noexcept {
     return getValueWithDefault<Config*>(name, nullptr);
 }
 
